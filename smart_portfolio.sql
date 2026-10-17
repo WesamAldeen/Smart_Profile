@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 17, 2026 at 01:35 PM
+-- Generation Time: Oct 17, 2026 at 03:04 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -110,15 +110,19 @@ CREATE TABLE `settings` (
   `footer_text` varchar(255) DEFAULT 'جميع الحقوق محفوظة',
   `about_title` varchar(255) DEFAULT 'نبذة عني',
   `about_subtitle` varchar(255) DEFAULT 'مطور ويب وشغوف ببناء الحلول الرقمية',
-  `about_text` text DEFAULT NULL
+  `about_text` text DEFAULT NULL,
+  `btn_style` varchar(50) DEFAULT 'jelly',
+  `btn_text_color` varchar(50) DEFAULT '#ffffff',
+  `font_family` varchar(100) DEFAULT 'Tajawal',
+  `card_theme` varchar(50) DEFAULT 'soft'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `settings`
 --
 
-INSERT INTO `settings` (`id`, `site_title`, `logo_type`, `logo_image`, `hero_title`, `hero_desc`, `hero_image`, `primary_color`, `whatsapp`, `linkedin`, `telegram`, `footer_text`, `about_title`, `about_subtitle`, `about_text`) VALUES
-(1, 'بروفايل', 'image', 'img_6ad0cb00a9ae3.jpeg', 'عباس محمد ابراهيم محمد احمد النور علي ادم ابراهيم', 'نحول أفكارك إلى مواقع وتطبيقات', 'img_6ad0cb00a9dec.jpeg', '#ce0dbe', '249924300246', 'google.com', 'chatgpt.com', 'جميع الحقوق محفوظة', 'نبذة عني', '', 'بهذه الطريقة ستكون قاعدة البيانات نظيفة ومتوافقة 100% مع الملفات البرمجية الحالية (بدون حقل الصور الخاص بالنبذة)، وسيعمل قسم \"نبذة عني\" بالنصوص والسيرة الذاتية والشغف بشكل سلس ومريح تماماً!');
+INSERT INTO `settings` (`id`, `site_title`, `logo_type`, `logo_image`, `hero_title`, `hero_desc`, `hero_image`, `primary_color`, `whatsapp`, `linkedin`, `telegram`, `footer_text`, `about_title`, `about_subtitle`, `about_text`, `btn_style`, `btn_text_color`, `font_family`, `card_theme`) VALUES
+(1, 'بروفايل', 'image', 'img_6ad0cb00a9ae3.jpeg', 'عباس محمد ابراهيم محمد احمد النور علي ادم ابراهيم', 'نحول أفكارك إلى مواقع وتطبيقات', 'img_6ad0cb00a9dec.jpeg', '#ffffff', '249924300246', 'google.com', 'chatgpt.com', 'جميع الحقوق محفوظة', 'نبذة عني', '', 'بهذه الطريقة ستكون قاعدة البيانات نظيفة ومتوافقة 100% مع الملفات البرمجية الحالية (بدون حقل الصور الخاص بالنبذة)، وسيعمل قسم \"نبذة عني\" بالنصوص والسيرة الذاتية والشغف بشكل سلس ومريح تماماً!', 'capsule', '#000000', 'Tajawal', 'flat');
 
 -- --------------------------------------------------------
 

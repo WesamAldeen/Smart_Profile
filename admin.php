@@ -20,19 +20,24 @@ function uploadFile($fileKey, $uploadDir) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['update_settings'])) {
-        $site_title    = $_POST['site_title'];
-        $logo_type     = $_POST['logo_type'];
-        $hero_title    = $_POST['hero_title'];
-        $hero_desc     = $_POST['hero_desc'];
-        $primary_color = $_POST['primary_color'];
-        $whatsapp      = $_POST['whatsapp'];
-        $linkedin      = $_POST['linkedin'];
-        $telegram      = $_POST['telegram'];
-        $footer_text   = $_POST['footer_text'];
+        $site_title    = $_POST['site_title'] ?? '';
+        $logo_type     = $_POST['logo_type'] ?? 'text';
+        $hero_title    = $_POST['hero_title'] ?? '';
+        $hero_desc     = $_POST['hero_desc'] ?? '';
+        $primary_color = $_POST['primary_color'] ?? '#4f46e5';
+        $whatsapp      = $_POST['whatsapp'] ?? '';
+        $linkedin      = $_POST['linkedin'] ?? '';
+        $telegram      = $_POST['telegram'] ?? '';
+        $footer_text   = $_POST['footer_text'] ?? '';
 
-        $about_title    = $_POST['about_title'];
-        $about_subtitle = $_POST['about_subtitle'];
-        $about_text     = $_POST['about_text'];
+        $about_title    = $_POST['about_title'] ?? 'نبذة عني';
+        $about_subtitle = $_POST['about_subtitle'] ?? '';
+        $about_text     = $_POST['about_text'] ?? '';
+
+        $btn_style      = $_POST['btn_style'] ?? 'jelly';
+        $btn_text_color = $_POST['btn_text_color'] ?? '#ffffff';
+        $font_family    = $_POST['font_family'] ?? 'Tajawal';
+        $card_theme     = $_POST['card_theme'] ?? 'soft';
 
         $logo_image = uploadFile('logo_image', $uploadDir);
         $hero_image = uploadFile('hero_image', $uploadDir);
@@ -41,9 +46,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$logo_image) $logo_image = $curr['logo_image'] ?? '';
         if (!$hero_image) $hero_image = $curr['hero_image'] ?? '';
 
-        $stmt = $pdo->prepare("UPDATE settings SET site_title = ?, logo_type = ?, logo_image = ?, hero_title = ?, hero_desc = ?, hero_image = ?, primary_color = ?, whatsapp = ?, linkedin = ?, telegram = ?, footer_text = ?, about_title = ?, about_subtitle = ?, about_text = ? WHERE id = 1");
-        $stmt->execute([$site_title, $logo_type, $logo_image, $hero_title, $hero_desc, $hero_image, $primary_color, $whatsapp, $linkedin, $telegram, $footer_text, $about_title, $about_subtitle, $about_text]);
-        $msg = "تم حفظ الإعدادات بنجاح!";
+        $stmt = $pdo->prepare("UPDATE settings SET 
+            site_title = ?, logo_type = ?, logo_image = ?, hero_title = ?, hero_desc = ?, hero_image = ?, 
+            primary_color = ?, whatsapp = ?, linkedin = ?, telegram = ?, footer_text = ?, 
+            about_title = ?, about_subtitle = ?, about_text = ?, 
+            btn_style = ?, btn_text_color = ?, font_family = ?, card_theme = ? 
+            WHERE id = 1");
+        $stmt->execute([
+            $site_title, $logo_type, $logo_image, $hero_title, $hero_desc, $hero_image, 
+            $primary_color, $whatsapp, $linkedin, $telegram, $footer_text, 
+            $about_title, $about_subtitle, $about_text, 
+            $btn_style, $btn_text_color, $font_family, $card_theme
+        ]);
+        $msg = "تم حفظ جميع الإعدادات والتنسيقات بنجاح!";
     }
 
     if (isset($_POST['update_sections'])) {
@@ -154,7 +169,9 @@ function adjustBrightnessAdmin($hex, $steps) {
     return $return;
 }
 
-$primary_hover = adjustBrightnessAdmin($primary_color, -30);
+$primary_hover  = adjustBrightnessAdmin($primary_color, -30);
+$btn_style_class= 'btn-style-' . ($settings['btn_style'] ?? 'jelly');
+$active_font    = $settings['font_family'] ?? 'Tajawal';
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -167,19 +184,24 @@ $primary_hover = adjustBrightnessAdmin($primary_color, -30);
         tailwind.config = { darkMode: 'class' }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;700&family=Amiri:wght@400;700&family=Cairo:wght@400;700&family=Changa:wght@400;700&family=El+Messiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;700&family=Marhey:wght@400;700&family=Noto+Kufi+Arabic:wght@400;700&family=Readex+Pro:wght@400;700&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=4.0">
     <style>
         :root {
             --primary-color: <?php echo $primary_color; ?>;
             --primary-hover: <?php echo $primary_hover; ?>;
             --primary-shadow: <?php echo $primary_color; ?>66;
+            --btn-text-color: <?php echo $settings['btn_text_color'] ?? '#ffffff'; ?>;
+        }
+        body {
+            font-family: '<?php echo $active_font; ?>', sans-serif !important;
         }
     </style>
 </head>
 <body class="bg-[var(--bg-main)] text-[var(--text-main)] p-4 sm:p-6 transition-colors duration-300">
 
     <div class="max-w-5xl mx-auto space-y-6 sm:space-y-8">
-        <!-- الهيدر المتجاوب -->
+        <!-- الهيدر -->
         <div class="soft-card p-4 sm:p-6 flex flex-col sm:flex-row justify-between items-center gap-4">
             <h1 class="text-xl sm:text-2xl font-black text-center sm:text-right">لوحة التحكم المباشرة</h1>
             <div class="flex items-center gap-3 w-full sm:w-auto justify-center">
@@ -187,7 +209,7 @@ $primary_hover = adjustBrightnessAdmin($primary_color, -30);
                     <i class="fa-solid fa-moon dark:hidden"></i>
                     <i class="fa-solid fa-sun hidden dark:block text-amber-400"></i>
                 </button>
-                <a href="index.php" target="_blank" class="btn-jelly text-xs !py-2.5 !px-4 w-full sm:w-auto text-center">
+                <a href="index.php" target="_blank" class="btn-custom <?php echo $btn_style_class; ?> text-xs !py-2.5 !px-4 w-full sm:w-auto text-center">
                     <span>معاينة الموقع</span>
                     <i class="fa-solid fa-external-link-alt mr-2"></i>
                 </a>
@@ -200,19 +222,19 @@ $primary_hover = adjustBrightnessAdmin($primary_color, -30);
             </div>
         <?php endif; ?>
 
-        <!-- الإعدادات العامة -->
+        <!-- الإعدادات العامة والتخصيص -->
         <div class="soft-card p-5 sm:p-8 space-y-6">
-            <h2 class="text-base sm:text-lg font-bold border-b border-[var(--border-color)] pb-3">الإعدادات العامة</h2>
+            <h2 class="text-base sm:text-lg font-bold border-b border-[var(--border-color)] pb-3">الإعدادات العامة والتخصيص</h2>
             <form method="POST" enctype="multipart/form-data" class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                 <div>
                     <label class="block font-bold text-xs mb-2">اسم الموقع</label>
-                    <input type="text" name="site_title" value="<?php echo htmlspecialchars($settings['site_title']); ?>" class="w-full border border-[var(--border-color)] bg-transparent p-2.5 rounded-xl text-sm outline-none">
+                    <input type="text" name="site_title" value="<?php echo htmlspecialchars($settings['site_title'] ?? ''); ?>" class="w-full border border-[var(--border-color)] bg-transparent p-2.5 rounded-xl text-sm outline-none">
                 </div>
                 <div>
                     <label class="block font-bold text-xs mb-2">نوع اللوغو</label>
                     <select name="logo_type" class="w-full border border-[var(--border-color)] bg-[var(--bg-card)] p-2.5 rounded-xl text-sm outline-none">
-                        <option value="text" <?php echo $settings['logo_type'] === 'text' ? 'selected' : ''; ?>>نص</option>
-                        <option value="image" <?php echo $settings['logo_type'] === 'image' ? 'selected' : ''; ?>>صورة</option>
+                        <option value="text" <?php echo ($settings['logo_type'] ?? '') === 'text' ? 'selected' : ''; ?>>نص</option>
+                        <option value="image" <?php echo ($settings['logo_type'] ?? '') === 'image' ? 'selected' : ''; ?>>صورة</option>
                     </select>
                 </div>
                 <div>
@@ -221,17 +243,71 @@ $primary_hover = adjustBrightnessAdmin($primary_color, -30);
                 </div>
                 <div>
                     <label class="block font-bold text-xs mb-2">اللون الأساسي</label>
-                    <input type="color" name="primary_color" value="<?php echo htmlspecialchars($settings['primary_color']); ?>" class="w-full h-10 rounded-xl border border-[var(--border-color)] cursor-pointer p-1 bg-transparent">
+                    <input type="color" name="primary_color" value="<?php echo htmlspecialchars($settings['primary_color'] ?? '#4f46e5'); ?>" class="w-full h-10 rounded-xl border border-[var(--border-color)] cursor-pointer p-1 bg-transparent">
+                </div>
+
+                <!-- تخصيص المظهر المتقدم -->
+                <div class="sm:col-span-2 pt-2 border-t border-[var(--border-color)]"><h3 class="font-bold text-sm dynamic-text">تخصيص المظهر (الأزرار، الخطوط، والأستايلات)</h3></div>
+                
+                <div>
+                    <label class="block font-bold text-xs mb-2">شكل الأزرار</label>
+                    <select name="btn_style" class="w-full border border-[var(--border-color)] bg-[var(--bg-card)] p-2.5 rounded-xl text-sm outline-none">
+                        <option value="jelly" <?php echo ($settings['btn_style'] ?? '') === 'jelly' ? 'selected' : ''; ?>>ثلاثي الأبعاد (Jelly / بارز)</option>
+                        <option value="capsule" <?php echo ($settings['btn_style'] ?? '') === 'capsule' ? 'selected' : ''; ?>>كبسولة ثلاثية الأبعاد (3D Capsule)</option>
+                        <option value="flat" <?php echo ($settings['btn_style'] ?? '') === 'flat' ? 'selected' : ''; ?>>مسطح عصري (Flat)</option>
+                        <option value="outline" <?php echo ($settings['btn_style'] ?? '') === 'outline' ? 'selected' : ''; ?>>إطار خارجي شفاف (Outline)</option>
+                        <option value="soft" <?php echo ($settings['btn_style'] ?? '') === 'soft' ? 'selected' : ''; ?>>ناعم مع ظل خفيف (Soft Shadow)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-xs mb-2">لون خط الأزرار</label>
+                    <input type="color" name="btn_text_color" value="<?php echo htmlspecialchars($settings['btn_text_color'] ?? '#ffffff'); ?>" class="w-full h-10 rounded-xl border border-[var(--border-color)] cursor-pointer p-1 bg-transparent">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-xs mb-2">نوع الخط العربي (10 خطوط)</label>
+                    <select name="font_family" class="w-full border border-[var(--border-color)] bg-[var(--bg-card)] p-2.5 rounded-xl text-sm outline-none">
+                        <?php 
+                        $fonts = [
+                            'Tajawal' => 'تجوال (Tajawal)',
+                            'Cairo' => 'كايرو (Cairo)',
+                            'Amiri' => 'أميري كلاسيكي (Amiri)',
+                            'Readex Pro' => 'ريادكس برو (Readex Pro)',
+                            'Changa' => 'شانغا البارز (Changa)',
+                            'El Messiri' => 'المسيري الفني (El Messiri)',
+                            'IBM Plex Sans Arabic' => 'آي بي إم بلكس (IBM Plex)',
+                            'Alexandria' => 'الإسكندرية (Alexandria)',
+                            'Marhey' => 'مارهاي الحيوي (Marhey)',
+                            'Noto Kufi Arabic' => 'نوتو كوفي (Noto Kufi)'
+                        ];
+                        foreach($fonts as $key => $name):
+                            $selected = (($settings['font_family'] ?? 'Tajawal') === $key) ? 'selected' : '';
+                            echo "<option value=\"$key\" $selected>$name</option>";
+                        endforeach;
+                        ?>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-xs mb-2">ستايل الأقسام والبطاقات</label>
+                    <select name="card_theme" class="w-full border border-[var(--border-color)] bg-[var(--bg-card)] p-2.5 rounded-xl text-sm outline-none">
+                        <option value="soft" <?php echo ($settings['card_theme'] ?? '') === 'soft' ? 'selected' : ''; ?>>1. الستايل الناعم البارز (Soft UI)</option>
+                        <option value="glass" <?php echo ($settings['card_theme'] ?? '') === 'glass' ? 'selected' : ''; ?>>2. الستايل الزجاجي الشفاف (Glassmorphism)</option>
+                        <option value="neon" <?php echo ($settings['card_theme'] ?? '') === 'neon' ? 'selected' : ''; ?>>3. الستايل النيون المتوهج (Neon Glow)</option>
+                        <option value="flat" <?php echo ($settings['card_theme'] ?? '') === 'flat' ? 'selected' : ''; ?>>4. الستايل الحد الأدنى (Minimal Flat)</option>
+                        <option value="elevation" <?php echo ($settings['card_theme'] ?? '') === 'elevation' ? 'selected' : ''; ?>>5. الستايل ثلاثي الأبعاد المرتفع (3D Elevated)</option>
+                    </select>
                 </div>
 
                 <div class="sm:col-span-2 pt-2 border-t border-[var(--border-color)]"><h3 class="font-bold text-sm">قسم الهيرو</h3></div>
                 <div class="sm:col-span-2">
                     <label class="block font-bold text-xs mb-2">عنوان الهيرو</label>
-                    <input type="text" name="hero_title" value="<?php echo htmlspecialchars($settings['hero_title']); ?>" class="w-full border border-[var(--border-color)] bg-transparent p-2.5 rounded-xl text-sm outline-none">
+                    <input type="text" name="hero_title" value="<?php echo htmlspecialchars($settings['hero_title'] ?? ''); ?>" class="w-full border border-[var(--border-color)] bg-transparent p-2.5 rounded-xl text-sm outline-none">
                 </div>
                 <div class="sm:col-span-2">
                     <label class="block font-bold text-xs mb-2">وصف الهيرو</label>
-                    <textarea name="hero_desc" rows="2" class="w-full border border-[var(--border-color)] bg-transparent p-2.5 rounded-xl text-sm outline-none"><?php echo htmlspecialchars($settings['hero_desc']); ?></textarea>
+                    <textarea name="hero_desc" rows="2" class="w-full border border-[var(--border-color)] bg-transparent p-2.5 rounded-xl text-sm outline-none"><?php echo htmlspecialchars($settings['hero_desc'] ?? ''); ?></textarea>
                 </div>
                 <div class="sm:col-span-2">
                     <label class="block font-bold text-xs mb-2">صورة الهيرو</label>
@@ -244,7 +320,7 @@ $primary_hover = adjustBrightnessAdmin($primary_color, -30);
                     <input type="text" name="about_title" value="<?php echo htmlspecialchars($settings['about_title'] ?? 'نبذة عني'); ?>" class="w-full border border-[var(--border-color)] bg-transparent p-2.5 rounded-xl text-sm outline-none">
                 </div>
                 <div>
-                    <label class="block font-bold text-xs mb-2">المسمى / العنوان الفرعي</label>
+                    <label class="block font-bold text-xs mb-2">العنوان الفرعي</label>
                     <input type="text" name="about_subtitle" value="<?php echo htmlspecialchars($settings['about_subtitle'] ?? ''); ?>" class="w-full border border-[var(--border-color)] bg-transparent p-2.5 rounded-xl text-sm outline-none">
                 </div>
                 <div class="sm:col-span-2">
@@ -255,23 +331,23 @@ $primary_hover = adjustBrightnessAdmin($primary_color, -30);
                 <div class="sm:col-span-2 pt-2 border-t border-[var(--border-color)]"><h3 class="font-bold text-sm">التواصل والفوتر</h3></div>
                 <div>
                     <label class="block font-bold text-xs mb-2">واتساب</label>
-                    <input type="text" name="whatsapp" value="<?php echo htmlspecialchars($settings['whatsapp']); ?>" class="w-full border border-[var(--border-color)] bg-transparent p-2.5 rounded-xl text-sm outline-none">
+                    <input type="text" name="whatsapp" value="<?php echo htmlspecialchars($settings['whatsapp'] ?? ''); ?>" class="w-full border border-[var(--border-color)] bg-transparent p-2.5 rounded-xl text-sm outline-none">
                 </div>
                 <div>
                     <label class="block font-bold text-xs mb-2">لينكد إن</label>
-                    <input type="text" name="linkedin" value="<?php echo htmlspecialchars($settings['linkedin']); ?>" class="w-full border border-[var(--border-color)] bg-transparent p-2.5 rounded-xl text-sm outline-none">
+                    <input type="text" name="linkedin" value="<?php echo htmlspecialchars($settings['linkedin'] ?? ''); ?>" class="w-full border border-[var(--border-color)] bg-transparent p-2.5 rounded-xl text-sm outline-none">
                 </div>
                 <div>
                     <label class="block font-bold text-xs mb-2">تليجرام</label>
-                    <input type="text" name="telegram" value="<?php echo htmlspecialchars($settings['telegram']); ?>" class="w-full border border-[var(--border-color)] bg-transparent p-2.5 rounded-xl text-sm outline-none">
+                    <input type="text" name="telegram" value="<?php echo htmlspecialchars($settings['telegram'] ?? ''); ?>" class="w-full border border-[var(--border-color)] bg-transparent p-2.5 rounded-xl text-sm outline-none">
                 </div>
                 <div>
                     <label class="block font-bold text-xs mb-2">نص الفوتر</label>
-                    <input type="text" name="footer_text" value="<?php echo htmlspecialchars($settings['footer_text']); ?>" class="w-full border border-[var(--border-color)] bg-transparent p-2.5 rounded-xl text-sm outline-none">
+                    <input type="text" name="footer_text" value="<?php echo htmlspecialchars($settings['footer_text'] ?? ''); ?>" class="w-full border border-[var(--border-color)] bg-transparent p-2.5 rounded-xl text-sm outline-none">
                 </div>
 
                 <div class="sm:col-span-2 pt-3">
-                    <button type="submit" name="update_settings" class="btn-jelly text-sm w-full sm:w-auto">حفظ الإعدادات</button>
+                    <button type="submit" name="update_settings" class="btn-custom <?php echo $btn_style_class; ?> text-sm w-full sm:w-auto">حفظ جميع الإعدادات والتنسيقات</button>
                 </div>
             </form>
         </div>
@@ -292,7 +368,7 @@ $primary_hover = adjustBrightnessAdmin($primary_color, -30);
                         </div>
                     </div>
                 <?php endforeach; ?>
-                <button type="submit" name="update_sections" class="btn-jelly text-sm w-full sm:w-auto">حفظ ترتيب الأقسام</button>
+                <button type="submit" name="update_sections" class="btn-custom <?php echo $btn_style_class; ?> text-sm w-full sm:w-auto">حفظ ترتيب الأقسام</button>
             </form>
         </div>
 
@@ -309,7 +385,7 @@ $primary_hover = adjustBrightnessAdmin($primary_color, -30);
                     <option value="fa-solid fa-star">تقييمات ممتازة</option>
                     <option value="fa-solid fa-award">جوائز وإنجازات</option>
                 </select>
-                <button type="submit" name="add_stat" class="btn-jelly text-sm sm:col-span-3 w-full">إضافة إحصائية</button>
+                <button type="submit" name="add_stat" class="btn-custom <?php echo $btn_style_class; ?> text-sm sm:col-span-3 w-full">إضافة إحصائية</button>
             </form>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                 <?php foreach ($stats as $st): ?>
@@ -336,7 +412,7 @@ $primary_hover = adjustBrightnessAdmin($primary_color, -30);
             <form method="POST" class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <input type="text" name="skill_name" placeholder="اسم المهارة (مثال: PHP)" required class="border border-[var(--border-color)] bg-transparent p-2.5 rounded-xl text-sm outline-none">
                 <input type="number" name="percentage" min="1" max="100" placeholder="النسبة المئوية (90)" required class="border border-[var(--border-color)] bg-transparent p-2.5 rounded-xl text-sm outline-none">
-                <button type="submit" name="add_skill" class="btn-jelly text-sm sm:col-span-2 w-full">إضافة المهارة</button>
+                <button type="submit" name="add_skill" class="btn-custom <?php echo $btn_style_class; ?> text-sm sm:col-span-2 w-full">إضافة المهارة</button>
             </form>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                 <?php foreach ($skills as $sk): ?>
@@ -361,7 +437,7 @@ $primary_hover = adjustBrightnessAdmin($primary_color, -30);
                 <input type="text" name="title" placeholder="عنوان الخدمة" required class="border border-[var(--border-color)] bg-transparent p-2.5 rounded-xl text-sm outline-none">
                 <input type="file" name="service_image" class="border border-[var(--border-color)] p-1.5 rounded-xl text-xs">
                 <textarea name="description" placeholder="وصف الخدمة" rows="2" required class="border border-[var(--border-color)] bg-transparent p-2.5 rounded-xl text-sm outline-none sm:col-span-2"></textarea>
-                <button type="submit" name="add_service" class="btn-jelly text-sm sm:col-span-2 w-full">إضافة الخدمة</button>
+                <button type="submit" name="add_service" class="btn-custom <?php echo $btn_style_class; ?> text-sm sm:col-span-2 w-full">إضافة الخدمة</button>
             </form>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                 <?php foreach ($services as $srv): ?>
@@ -389,7 +465,7 @@ $primary_hover = adjustBrightnessAdmin($primary_color, -30);
                 <input type="text" name="project_url" placeholder="رابط المشروع" class="border border-[var(--border-color)] bg-transparent p-2.5 rounded-xl text-sm outline-none">
                 <input type="file" name="portfolio_image" class="border border-[var(--border-color)] p-1.5 rounded-xl text-xs sm:col-span-2">
                 <textarea name="description" placeholder="وصف العمل" rows="2" required class="border border-[var(--border-color)] bg-transparent p-2.5 rounded-xl text-sm outline-none sm:col-span-2"></textarea>
-                <button type="submit" name="add_portfolio" class="btn-jelly text-sm sm:col-span-2 w-full">إضافة العمل</button>
+                <button type="submit" name="add_portfolio" class="btn-custom <?php echo $btn_style_class; ?> text-sm sm:col-span-2 w-full">إضافة العمل</button>
             </form>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                 <?php foreach ($portfolio as $item): ?>
@@ -417,7 +493,7 @@ $primary_hover = adjustBrightnessAdmin($primary_color, -30);
                 <input type="text" name="client_role" placeholder="المسمى الوظيفي" class="border border-[var(--border-color)] bg-transparent p-2.5 rounded-xl text-sm outline-none">
                 <input type="file" name="client_image" class="border border-[var(--border-color)] p-1.5 rounded-xl text-xs sm:col-span-2">
                 <textarea name="feedback" placeholder="رأي العميل..." rows="2" required class="border border-[var(--border-color)] bg-transparent p-2.5 rounded-xl text-sm outline-none sm:col-span-2"></textarea>
-                <button type="submit" name="add_testimonial" class="btn-jelly text-sm sm:col-span-2 w-full">إضافة الرأي</button>
+                <button type="submit" name="add_testimonial" class="btn-custom <?php echo $btn_style_class; ?> text-sm sm:col-span-2 w-full">إضافة الرأي</button>
             </form>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                 <?php foreach ($testimonials as $t): ?>

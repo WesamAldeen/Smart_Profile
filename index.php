@@ -35,10 +35,13 @@ function adjustBrightness($hex, $steps) {
     return $return;
 }
 
-$primary_hover = adjustBrightness($primary_color, -30);
+$primary_hover   = adjustBrightness($primary_color, -30);
+$btn_style_class = 'btn-style-' . ($settings['btn_style'] ?? 'jelly');
+$card_theme_class= 'card-theme-' . ($settings['card_theme'] ?? 'soft');
+$active_font     = $settings['font_family'] ?? 'Tajawal';
 ?>
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="<?php echo $card_theme_class; ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -48,12 +51,17 @@ $primary_hover = adjustBrightness($primary_color, -30);
         tailwind.config = { darkMode: 'class' }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;700&family=Amiri:wght@400;700&family=Cairo:wght@400;700&family=Changa:wght@400;700&family=El+Messiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;700&family=Marhey:wght@400;700&family=Noto+Kufi+Arabic:wght@400;700&family=Readex+Pro:wght@400;700&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=4.0">
     <style>
         :root {
             --primary-color: <?php echo $primary_color; ?>;
             --primary-hover: <?php echo $primary_hover; ?>;
             --primary-shadow: <?php echo $primary_color; ?>66;
+            --btn-text-color: <?php echo $settings['btn_text_color'] ?? '#ffffff'; ?>;
+        }
+        body {
+            font-family: '<?php echo $active_font; ?>', sans-serif !important;
         }
     </style>
 </head>
@@ -104,7 +112,6 @@ $primary_hover = adjustBrightness($primary_color, -30);
     <?php foreach ($sections as $sec): ?>
         
         <?php if ($sec['section_key'] === 'hero'): ?>
-            <!-- قسم الهيرو بتصميم إحصائيات أفقي حديث للغاية وبدون حواف قديمة -->
             <section id="hero" class="py-16 md:py-24 relative overflow-hidden">
                 <div class="container mx-auto px-6">
                     <div class="flex flex-col md:flex-row items-center justify-between gap-12">
@@ -117,17 +124,16 @@ $primary_hover = adjustBrightness($primary_color, -30);
                             </p>
                             
                             <div class="pt-2">
-                                <a href="#portfolio" class="btn-jelly gap-3 text-sm md:text-base">
+                                <a href="#portfolio" class="btn-custom <?php echo $btn_style_class; ?> gap-3 text-sm md:text-base">
                                     <span>استكشف أعمالنا</span>
                                     <i class="fa-solid fa-arrow-left"></i>
                                 </a>
                             </div>
 
-                            <!-- تصميم المهارات والإحصائيات تحت الهيرو بشكل شارات أنيقة متراصفة -->
                             <?php if (!empty($stats)): ?>
                                 <div class="pt-6 flex flex-wrap items-center gap-4 border-t border-[var(--border-color)]">
                                     <?php foreach ($stats as $stat): ?>
-                                        <div class="flex items-center gap-3 bg-[var(--bg-card)] px-4 py-2.5 rounded-2xl shadow-sm border border-[var(--border-color)]">
+                                        <div class="flex items-center gap-3 card-style px-4 py-2.5">
                                             <span class="dynamic-text text-lg"><i class="<?php echo htmlspecialchars($stat['icon_class']); ?>"></i></span>
                                             <div class="flex items-center gap-1.5">
                                                 <span class="text-lg font-black dynamic-text"><?php echo htmlspecialchars($stat['stat_number']); ?></span>
@@ -171,7 +177,6 @@ $primary_hover = adjustBrightness($primary_color, -30);
             </section>
 
         <?php elseif ($sec['section_key'] === 'skills'): ?>
-            <!-- قسم المهارات يتكون من 4 أعمدة في السطر وتتجاوب تلقائياً بدون بوردرز متكلفة -->
             <section id="skills" class="py-20 md:py-28">
                 <div class="container mx-auto px-6">
                     <div class="text-center mb-16">
@@ -181,7 +186,7 @@ $primary_hover = adjustBrightness($primary_color, -30);
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         <?php foreach ($skills as $skill): ?>
-                            <div class="soft-card p-5 space-y-3">
+                            <div class="card-style p-5 space-y-3">
                                 <div class="flex justify-between items-center font-bold text-sm">
                                     <span class="font-extrabold"><?php echo htmlspecialchars($skill['skill_name']); ?></span>
                                     <span class="dynamic-text font-black"><?php echo (int)$skill['percentage']; ?>%</span>
@@ -196,7 +201,6 @@ $primary_hover = adjustBrightness($primary_color, -30);
             </section>
 
         <?php elseif ($sec['section_key'] === 'services'): ?>
-            <!-- قسم الخدمات بدون بوردر ملون على الصورة أو البطاقة -->
             <section id="services" class="py-20 md:py-28 bg-[var(--bg-card)]">
                 <div class="container mx-auto px-6">
                     <div class="text-center mb-16">
@@ -205,7 +209,7 @@ $primary_hover = adjustBrightness($primary_color, -30);
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         <?php foreach ($services as $srv): ?>
-                            <div class="hover-lift p-8 flex flex-col">
+                            <div class="card-style hover-lift p-8 flex flex-col">
                                 <div class="flex items-center gap-4 mb-4">
                                     <?php if (!empty($srv['image'])): ?>
                                         <div class="w-14 h-14 rounded-2xl overflow-hidden flex-shrink-0 bg-slate-100 dark:bg-slate-800">
@@ -241,7 +245,7 @@ $primary_hover = adjustBrightness($primary_color, -30);
                                     <h3 class="text-xl font-black text-white mb-2"><?php echo htmlspecialchars($item['title']); ?></h3>
                                     <p class="text-slate-300 text-xs mb-5 line-clamp-3 leading-relaxed"><?php echo htmlspecialchars($item['description']); ?></p>
                                     <?php if (!empty($item['project_url'])): ?>
-                                        <a href="<?php echo htmlspecialchars(formatUrl($item['project_url'])); ?>" target="_blank" class="btn-jelly gap-2 text-xs self-start !py-2 !px-4">
+                                        <a href="<?php echo htmlspecialchars(formatUrl($item['project_url'])); ?>" target="_blank" class="btn-custom <?php echo $btn_style_class; ?> gap-2 text-xs self-start !py-2 !px-4">
                                             <span>رابط المشروع</span>
                                             <i class="fa-solid fa-arrow-left"></i>
                                         </a>
@@ -254,7 +258,6 @@ $primary_hover = adjustBrightness($primary_color, -30);
             </section>
 
         <?php elseif ($sec['section_key'] === 'testimonials'): ?>
-            <!-- قسم آراء العملاء بدون أي بوردرز ملونة على الصورة -->
             <section id="testimonials" class="py-20 md:py-28 bg-[var(--bg-card)]">
                 <div class="container mx-auto px-6">
                     <div class="text-center mb-16">
@@ -263,7 +266,7 @@ $primary_hover = adjustBrightness($primary_color, -30);
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         <?php foreach ($testimonials as $t): ?>
-                            <div class="hover-lift p-6 flex flex-col justify-between">
+                            <div class="card-style hover-lift p-6 flex flex-col justify-between">
                                 <div class="flex items-center gap-4 border-b border-[var(--border-color)] pb-4 mb-4">
                                     <?php if (!empty($t['client_image'])): ?>
                                         <img src="uploads/<?php echo htmlspecialchars($t['client_image']); ?>" alt="Client" class="w-12 h-12 rounded-full object-cover flex-shrink-0">
@@ -301,7 +304,7 @@ $primary_hover = adjustBrightness($primary_color, -30);
                     </div>
 
                     <div class="border-t border-slate-800 pt-8 mt-12">
-                        <p class="text-xs md:text-sm text-slate-500"><?php echo htmlspecialchars($settings['footer_text'] ?? 'جميع الحقوق محفوظة'); ?> &copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($settings['site_title']); ?></p>
+                        <p class="text-xs md:text-sm text-slate-500"><?php echo htmlspecialchars($settings['footer_text'] ?? 'جميع الحقوق محفوظة'); ?> &copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($settings['site_title'] ?? ''); ?></p>
                     </div>
                 </div>
             </section>
