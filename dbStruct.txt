@@ -1,0 +1,58 @@
+-- 1. إنشاء قاعدة البيانات
+CREATE DATABASE IF NOT EXISTS smart_portfolio CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE smart_portfolio;
+
+-- 2. جدول الإعدادات العامة والثيم واللوغو
+CREATE TABLE settings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    site_title VARCHAR(255),
+    logo_type VARCHAR(20) DEFAULT 'text', -- خيارين: 'text' أو 'image'
+    logo_image VARCHAR(255),             -- اسم ملف صورة اللوغو في مجلد img
+    hero_title VARCHAR(255),
+    hero_desc TEXT,
+    hero_image VARCHAR(255),
+    primary_color VARCHAR(50) DEFAULT '#d4af37',
+    whatsapp VARCHAR(50),
+    linkedin VARCHAR(255),
+    telegram VARCHAR(255)
+);
+
+-- إدراج صف افتراضي للإعدادات حتى يعمل الموقع بشكل فوري
+INSERT INTO settings (id, site_title, logo_type, hero_title, hero_desc, primary_color, whatsapp) 
+VALUES (1, 'CodeExport', 'text', 'نبني لك مستقبلك الرقمي بأعلى احترافية', 'نحول أفكارك إلى مواقع وتطبيقات ويب عصرية، فائقة السرعة، وبتصميم هادئ ومريح يلفت الانتباه.', '#d4af37', '201557704610');
+
+-- 3. جدول الأقسام الديناميكية (للتحكم في ظهورها وترتيبها)
+CREATE TABLE sections (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    section_key VARCHAR(100) UNIQUE, -- مثل: about, services, portfolio, testimonials
+    section_name VARCHAR(100),
+    is_active TINYINT DEFAULT 1,
+    display_order INT
+);
+
+-- إدراج الأقسام الافتراضية
+INSERT INTO sections (section_key, section_name, is_active, display_order) VALUES
+('hero', 'الهيرو سكشن', 1, 1),
+('about', 'من نحن', 1, 2),
+('services', 'خدماتنا', 1, 3),
+('portfolio', 'أعمالنا', 1, 4),
+('testimonials', 'آراء العملاء', 1, 5);
+
+-- 4. جدول الأعمال والمشاريع
+CREATE TABLE portfolio_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255),
+    description TEXT,
+    image VARCHAR(255),
+    project_url VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 5. جدول آراء العملاء
+CREATE TABLE testimonials (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    client_name VARCHAR(100),
+    client_role VARCHAR(100),
+    client_image VARCHAR(255),
+    feedback TEXT
+);
